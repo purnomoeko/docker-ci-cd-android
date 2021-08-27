@@ -1,0 +1,3 @@
+add-ons;addon-google_apis-google-24
+platforms;android-30
+platform-tools
