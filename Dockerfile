@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:21.04
 LABEL MAINTAINER Eko<eko.purnomo@icloud.com>
 
 ENV VERSION_TOOLS "6858069"
@@ -25,6 +25,7 @@ RUN apt-get update \
     libz1 \
     unzip \
     locales \
+    wget \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN locale-gen en_US.UTF-8
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
@@ -52,9 +53,20 @@ RUN sdkmanager --package_file=/sdk/packages.txt
 
 # Install gradle
 # RUN apt-get update
-# RUN apt-get install wget
-RUN curl https://services.gradle.org/distributions/gradle-6.5-all.zip --output gradle.zip | bash \
-    && unzip gradle.zip -d /opt
-RUN ls -alh
-ENV GRADLE_HOME /opt/gradle-6.5-all/
-ENV PATH $PATH:/opt/gradle-6.5-all/bin
+RUN apt-get install wget
+RUN wget https://downloads.gradle-dn.com/distributions/gradle-6.9.2-all.zip
+RUN unzip gradle-6.9.2-all.zip -d /opt
+
+ENV GRADLE_HOME /opt/gradle-6.9.2-all/
+ENV PATH $PATH:/opt/gradle-6.9.2-all/bin
+
+#GEM 
+RUN apt-get update
+RUN apt-get install --no-install-recommends -y --allow-unauthenticated build-essential git ruby-full && \
+    gem install rake && \
+    gem install fastlane && \
+    gem install bundler && \
+    # Clean up
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    apt-get autoremove -y && \
+    apt-get clean
